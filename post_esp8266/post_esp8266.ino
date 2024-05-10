@@ -2,7 +2,7 @@
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 
-int val = 0;
+String message_arduino;
 
 const char* ssid = "network-name";
 const char* password = "password";
@@ -19,7 +19,7 @@ unsigned long lastTime = 0;
 unsigned long timerDelay = 5000;
 
 void setup() {
-  // Serial.begin(115200);
+  Serial.begin(9600);
 
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -58,8 +58,15 @@ void loop() {
       //int httpResponseCode = http.POST("{\"api_key\":\"tPmAT5Ab3j7F9\",\"sensor\":\"BME280\",\"value1\":\"24.25\",\"value2\":\"49.54\",\"value3\":\"1005.14\"}");
 
       // If you need an HTTP request with a content type: text/plain
+
+      if (Serial.available()) {
+        message_arduino = Serial.readString();
+      } else {
+        message_arduino = "No message";
+      }
+
       http.addHeader("Content-Type", "text/plain");
-      int httpResponseCode = http.POST("Hello, World!");
+      int httpResponseCode = http.POST(message_arduino);
 
       // Serial.print("HTTP Response code: ");
       // Serial.println(httpResponseCode);
