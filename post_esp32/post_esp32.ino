@@ -1,11 +1,8 @@
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <WiFiClient.h>
-
-String message_arduino;
+#include <WiFi.h>
+#include <HTTPClient.h>
 
 const char* ssid = "network-name";
-const char* password = "password";
+const char* password = "network-password";
 
 //Your Domain name with URL path or IP address with path
 const char* serverName = "http://192.168.1.171:5000";
@@ -19,17 +16,10 @@ unsigned long lastTime = 0;
 unsigned long timerDelay = 5000;
 
 void setup() {
-  Serial.begin(9600);
-
-  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(115200);
 
   WiFi.begin(ssid, password);
-  while(WiFi.status() != WL_CONNECTED) {
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(250);
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(250);
-  }
+  delay(2000);
 }
 
 void loop() {
@@ -59,34 +49,16 @@ void loop() {
 
       // If you need an HTTP request with a content type: text/plain
 
-      if (Serial.available()) {
-        message_arduino = Serial.readString();
-      } else {
-        message_arduino = "No message";
-      }
-
       http.addHeader("Content-Type", "text/plain");
-      int httpResponseCode = http.POST(message_arduino);
+      int httpResponseCode = http.POST("Hola Mundo");
 
       // Serial.print("HTTP Response code: ");
       // Serial.println(httpResponseCode);
-
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(100);
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(100);
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(100);
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(100);
         
       // Free resources
       http.end();
     }
     else {
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(1000);
-      digitalWrite(LED_BUILTIN, HIGH);
       delay(1000);
     }
     lastTime = millis();
